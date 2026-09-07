@@ -13,12 +13,14 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: Run
-                  name: Echo Welcome Message
-                  identifier: Echo_Welcome_Message
+                  type: BuildAndPushDockerRegistry
+                  name: build-and-push-ghcr
+                  identifier: buildandpushghcr
                   spec:
-                    shell: Sh
-                    command: echo "Welcome to Harness CI"
+                    connectorRef: ghcrconnector
+                    repo: vipulmahajan1988/harness-practice
+                    tags:
+                      - latest
           platform:
             os: Linux
             arch: Amd64
