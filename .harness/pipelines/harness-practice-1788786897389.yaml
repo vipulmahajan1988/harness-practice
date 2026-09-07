@@ -18,7 +18,7 @@ pipeline:
                   identifier: buildandpushghcr
                   spec:
                     connectorRef: ghcrconnector
-                    repo: vipulmahajan1988/harness-practice
+                    repo: ghcr.io/vipulmahajan1988/harness-practice
                     tags:
                       - latest
           platform:
