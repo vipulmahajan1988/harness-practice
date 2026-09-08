@@ -25,15 +25,6 @@ pipeline:
                       npm install
                       echo "Running tests..."
                       npm test
-              - step:
-                  type: BuildAndPushDockerRegistry
-                  name: build-and-push-ghcr
-                  identifier: buildandpushghcr
-                  spec:
-                    connectorRef: ghcrconnector
-                    repo: ghcr.io/vipulmahajan1988/harness-practice
-                    tags:
-                      - latest
           platform:
             os: Linux
             arch: Amd64
