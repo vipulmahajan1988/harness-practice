@@ -40,6 +40,35 @@ pipeline:
           runtime:
             type: Cloud
             spec: {}
+    - stage:
+        name: push-image
+        identifier: pushimage
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: push-to-github
+                  identifier: pushtogithub
+                  spec:
+                    connectorRef: ghcrconnector
+                    repo: ghcr.io/vipulmahajan1988/harness-practice
+                    tags:
+                      - latest
   properties:
     ci:
       codebase:
