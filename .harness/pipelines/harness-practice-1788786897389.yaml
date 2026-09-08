@@ -37,10 +37,11 @@ pipeline:
         description: ""
         type: CI
         spec:
-          cloneCodebase: false
+          cloneCodebase: true
           caching:
             enabled: true
             override: true
+            paths: []
           buildIntelligence:
             enabled: true
           platform:
