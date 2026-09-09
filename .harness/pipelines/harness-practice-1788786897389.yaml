@@ -3,6 +3,13 @@ pipeline:
   identifier: Build_harness_practice_1788787043683
   projectIdentifier: default_project
   orgIdentifier: default
+  variables:
+    - name: IMAGE_REPO
+      type: String
+      value: ghcr.io/vipulmahajan1988/harness-practice
+    - name: NODE_VERSION
+      type: String
+      value: "22"
   stages:
     - stage:
         name: Build
@@ -18,7 +25,7 @@ pipeline:
                   identifier: installandtest
                   spec:
                     connectorRef: account.harnessImage
-                    image: node:22-alpine
+                    image: node:<+pipeline.variables.NODE_VERSION>-alpine
                     shell: Sh
                     command: |-
                       echo "Installing dependencies..."
@@ -58,7 +65,7 @@ pipeline:
                   identifier: pushtogithub
                   spec:
                     connectorRef: ghcrconnector
-                    repo: ghcr.io/vipulmahajan1988/harness-practice
+                    repo: <+pipeline.variables.IMAGE_REPO>
                     tags:
                       - latest
   properties:
