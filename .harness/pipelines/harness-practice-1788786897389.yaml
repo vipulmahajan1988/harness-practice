@@ -32,6 +32,19 @@ pipeline:
                       npm install
                       echo "Running tests..."
                       npm test
+                  failureStrategies:
+                    - onFailure:
+                        errors:
+                          - AllErrors
+                        action:
+                          type: Retry
+                          spec:
+                            retryCount: 2
+                            retryIntervals:
+                              - 10s
+                            onRetryFailure:
+                              action:
+                                type: Abort
           platform:
             os: Linux
             arch: Amd64
