@@ -90,7 +90,7 @@ pipeline:
                   name: security-scan
                   identifier: securityscan
                   spec:
-                    connectorRef: hjajsakj
+                    connectorRef: account.harnessImage
                     image: aquasec/trivy:latest
                     shell: Sh
                     command: |-
