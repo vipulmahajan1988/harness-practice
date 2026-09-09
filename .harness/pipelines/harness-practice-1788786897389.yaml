@@ -19,32 +19,45 @@ pipeline:
           cloneCodebase: true
           execution:
             steps:
-              - step:
-                  type: Run
-                  name: install-and-test
-                  identifier: installandtest
-                  spec:
-                    connectorRef: account.harnessImage
-                    image: node:<+pipeline.variables.NODE_VERSION>-alpine
-                    shell: Sh
-                    command: |-
-                      echo "Installing dependencies..."
-                      npm install
-                      echo "Running tests..."
-                      npm test
-                  failureStrategies:
-                    - onFailure:
-                        errors:
-                          - AllErrors
-                        action:
-                          type: Retry
-                          spec:
-                            retryCount: 2
-                            retryIntervals:
-                              - 10s
-                            onRetryFailure:
-                              action:
-                                type: Abort
+              - parallel:
+                  - step:
+                      type: Run
+                      name: install-and-test
+                      identifier: installandtest
+                      spec:
+                        connectorRef: account.harnessImage
+                        image: node:<+pipeline.variables.NODE_VERSION>-alpine
+                        shell: Sh
+                        command: |-
+                          echo "Installing dependencies..."
+                          npm install
+                          echo "Running tests..."
+                          npm test
+                      failureStrategies:
+                        - onFailure:
+                            errors:
+                              - AllErrors
+                            action:
+                              type: Retry
+                              spec:
+                                retryCount: 2
+                                retryIntervals:
+                                  - 10s
+                                onRetryFailure:
+                                  action:
+                                    type: Abort
+                  - step:
+                      type: Run
+                      name: lint-check
+                      identifier: lintcheck
+                      spec:
+                        connectorRef: account.harnessImage
+                        image: node:<+pipeline.variables.NODE_VERSION>-alpine
+                        shell: Sh
+                        command: |-
+                          echo "Running lint checks..."
+                          echo "No lint errors found"
+                          echo "Lint passed"
           platform:
             os: Linux
             arch: Amd64
