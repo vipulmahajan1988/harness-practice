@@ -1,0 +1,37 @@
+inputSet:
+  pipeline:
+    identifier: testnodejstemplate
+    template:
+      templateInputs:
+        variables:
+          - name: IMAGE_REPO
+            type: String
+            value: ghcr.io/vipulmahajan1988/harness-practice
+          - name: NODE_VERSION
+            type: String
+            value: "22"
+        stages:
+          - stage:
+              identifier: pushimage
+              type: CI
+              spec:
+                execution:
+                  steps:
+                    - step:
+                        identifier: pushtogithub
+                        type: BuildAndPushDockerRegistry
+                        spec:
+                          connectorRef: ghcrconnector
+        properties:
+          ci:
+            codebase:
+              connectorRef: githubpoc
+              repoName: harness-practice
+              build:
+                spec:
+                  branch: main
+                type: branch
+  name: vipul-dev-input
+  identifier: vipuldevinput
+  orgIdentifier: default
+  projectIdentifier: default_project
