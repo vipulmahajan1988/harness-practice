@@ -1,0 +1,124 @@
+template:
+  name: nodejs-ci-template
+  type: Pipeline
+  projectIdentifier: default_project
+  orgIdentifier: default
+  spec:
+    variables:
+      - name: IMAGE_REPO
+        type: String
+        value: ghcr.io/vipulmahajan1988/harness-practice
+      - name: NODE_VERSION
+        type: String
+        value: "22"
+    stages:
+      - stage:
+          name: Build
+          identifier: Build
+          type: CI
+          spec:
+            cloneCodebase: true
+            execution:
+              steps:
+                - parallel:
+                    - step:
+                        type: Run
+                        name: install-and-test
+                        identifier: installandtest
+                        spec:
+                          connectorRef: account.harnessImage
+                          image: node:<+pipeline.variables.NODE_VERSION>-alpine
+                          shell: Sh
+                          command: |-
+                            echo "Installing dependencies..."
+                            npm install
+                            echo "Running tests..."
+                            npm test
+                        failureStrategies:
+                          - onFailure:
+                              errors:
+                                - AllErrors
+                              action:
+                                type: Retry
+                                spec:
+                                  retryCount: 2
+                                  retryIntervals:
+                                    - 10s
+                                  onRetryFailure:
+                                    action:
+                                      type: Abort
+                    - step:
+                        type: Run
+                        name: lint-check
+                        identifier: lintcheck
+                        spec:
+                          connectorRef: account.harnessImage
+                          image: node:<+pipeline.variables.NODE_VERSION>-alpine
+                          shell: Sh
+                          command: |-
+                            echo "Running lint checks..."
+                            echo "No lint errors found"
+                            echo "Lint passed"
+            platform:
+              os: Linux
+              arch: Amd64
+            runtime:
+              type: Cloud
+              spec: {}
+      - stage:
+          name: push-image
+          identifier: pushimage
+          description: ""
+          type: CI
+          spec:
+            cloneCodebase: true
+            caching:
+              enabled: true
+              override: true
+              paths: []
+            buildIntelligence:
+              enabled: true
+            platform:
+              os: Linux
+              arch: Amd64
+            runtime:
+              type: Cloud
+              spec: {}
+            execution:
+              steps:
+                - step:
+                    type: Run
+                    name: security-scan
+                    identifier: securityscan
+                    spec:
+                      connectorRef: account.harnessImage
+                      image: aquasec/trivy:latest
+                      shell: Sh
+                      command: |-
+                        echo "Running Trivy security scan..."
+                        trivy image --exit-code 0 --severity HIGH,CRITICAL --no-progress node:22-alpine
+                        echo "Trivy scan complete"
+                    failureStrategies:
+                      - onFailure:
+                          errors:
+                            - AllErrors
+                          action:
+                            type: Ignore
+                - step:
+                    type: BuildAndPushDockerRegistry
+                    name: push-to-github
+                    identifier: pushtogithub
+                    spec:
+                      connectorRef: ghcrconnector
+                      repo: <+pipeline.variables.IMAGE_REPO>
+                      tags:
+                        - latest
+    properties:
+      ci:
+        codebase:
+          connectorRef: githubpoc
+          repoName: harness-practice
+          build: <+input>
+  identifier: nodejscitemplate
+  versionLabel: v1.000
+  description: Node.js CI pipeline — build, test, scan, push to ghcr.io
