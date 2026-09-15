@@ -4,7 +4,7 @@ pipeline:
   tags: {}
   template:
     templateRef: nodejscitemplate
-    versionLabel: v1.000
+    versionLabel: v1.010
     templateInputs:
       variables:
         - name: IMAGE_REPO
