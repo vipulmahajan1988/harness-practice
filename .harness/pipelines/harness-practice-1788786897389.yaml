@@ -119,3 +119,18 @@ pipeline:
         connectorRef: githubpoc
         repoName: harness-practice
         build: <+input>
+  notificationRules:
+    - name: pipeline-failure-alert
+      identifier: pipelinefailurealert
+      pipelineEvents:
+        - type: PipelineFailed
+        - type: StageFailed
+          forStages:
+            - AllStages
+      notificationMethod:
+        type: Email
+        spec:
+          userGroups: []
+          recipients:
+            - vipul.mahajan@accenture.com
+      enabled: true
