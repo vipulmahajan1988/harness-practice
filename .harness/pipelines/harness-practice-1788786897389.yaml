@@ -6,7 +6,7 @@ pipeline:
   variables:
     - name: IMAGE_REPO
       type: String
-      value: <+account.variables.CONTAINER_REGISTRY>/<+account.variables.GITHUB_USER>/harness-practice
+      value: ghcr.io/vipulmahajan1988/harness-practice
     - name: NODE_VERSION
       type: String
       value: "22"
