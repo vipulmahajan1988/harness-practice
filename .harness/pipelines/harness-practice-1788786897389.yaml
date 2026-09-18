@@ -127,6 +127,7 @@ pipeline:
         - type: StageFailed
           forStages:
             - AllStages
+        - type: PipelineStart
       notificationMethod:
         type: Email
         spec:
